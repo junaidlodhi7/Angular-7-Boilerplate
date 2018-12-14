@@ -1,0 +1,27 @@
+
+<div class="container">
+  <h2>login</h2>
+  <form name="form" #f="ngForm" (ngSubmit)="f.valid && onSubmit()" novalidate>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input  type="email" class="form-control" [(ngModel)]="model.email" id="email"  #email="ngModel" [ngClass]="{'is-invalid': f.submitted && email.invalid}"  placeholder="Enter email" name="email" required>
+      <div class="invalid-feedback">
+        <div>email is invalid</div>
+      </div>
+    </div>
+  
+    <div class="form-group">
+      <label for="pwd">Password:</label>
+      <input  type="password" class="form-control" [(ngModel)] = "model.password" #password="ngModel" [ngClass]="{'is-invalid': f.submitted && password.invalid}" id="pwd" placeholder="Enter password" name="pwd" required minlength="6" >
+      <div *ngIf="f.submitted && password.invalid"  class="invalid-feedback">
+        <div *ngIf="email.errors.minlength">minimum 6 characters</div>
+        <div *ngIf="email.errors.required">password is required</div>
+      </div>
+        </div>
+    <div class="checkbox">
+      <label><input type="checkbox" name="remember"> Remember me</label>
+    </div>
+    <button  class="btn btn-default">Submit</button>
+   
+  </form>
+</div>

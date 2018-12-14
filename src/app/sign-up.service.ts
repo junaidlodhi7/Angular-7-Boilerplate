@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {UserModel} from './models/userModel';
+import { map } from 'rxjs/operators';
+import {HttpHeaders} from "@angular/common/http";
+import { promise } from 'protractor';
 
 @Injectable({
   providedIn: 'root'
@@ -9,23 +12,31 @@ import {UserModel} from './models/userModel';
 export class SignUpService {
 
   constructor(private http:HttpClient) { }
-
-  
-  // getTodo() : Observable<UserModel[]> {
-  //   return this.http.get<UserModel[]>('https://jsonplaceholder.typicode.com/todos/1');
-  
-  // }
-
-  login(emailandpassword){
-    return this.http.post('https://api-imfo.herokuapp.com/v1/login', emailandpassword)
-    .map(
-      res => {
-        console.log(res.data);
-        console.log(res.token);
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('user', JSON.stringify(res.data));
-      }
-    );
+  private headers = new HttpHeaders();
+  getHeaders(token) {
+    return {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        'x-access-token': token
+      })
+    };
   }
- 
+
+
+  login (user){
+    return this.http.post<any>('https://api-imfo.herokuapp.com/v1/login', { email: user.email, password: user.password });
+  }
+
+
+  verfiyToken(){
+    return new Promise((resolve,reject)=>{
+      let token = localStorage.getItem('token') || null;
+      return this.http.get<any>('https://api-imfo.herokuapp.com/v1/me',this.getHeaders(token)).toPromise().then(response => {
+        resolve(true);
+      }).catch(() => reject(false));
+    })
+  }
+
 }
+
+
